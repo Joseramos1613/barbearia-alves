@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "./supabase";
 
 export default function Home() {
   const [nome, setNome] = useState("");
@@ -8,16 +9,36 @@ export default function Home() {
   const [barbeiro, setBarbeiro] = useState("");
   const [servico, setServico] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function agendar() {
+  async function agendar() {
     if (!nome || !telefone || !barbeiro || !servico) {
       setMensagem("Preencha todos os campos.");
       return;
     }
 
-    setMensagem(
-      `Agendamento realizado para ${nome} com ${barbeiro}.`
-    );
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("agendamentos")
+      .insert([
+        {
+          nome,
+          telefone,
+          barbeiro,
+          servico,
+        },
+      ]);
+
+    setLoading(false);
+
+    if (error) {
+      setMensagem("Erro ao salvar agendamento.");
+      console.log(error);
+      return;
+    }
+
+    setMensagem("Agendamento realizado com sucesso!");
 
     setNome("");
     setTelefone("");
@@ -33,7 +54,7 @@ export default function Home() {
         </h1>
 
         <p className="text-center text-zinc-400 mt-3">
-          Av. Ruda, 624, loja 4, Centro, Capão da Canoa - RS
+          Av. Ruda, 624
         </p>
 
         <div className="space-y-5 mt-10">
@@ -67,17 +88,20 @@ export default function Home() {
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
             <option value="">Escolha o serviço</option>
-            <option>Corte </option>
+            <option>Corte Masculino</option>
             <option>Barba</option>
             <option>Corte + Barba</option>
-            <option>Sobrancelha</option>
+            <option>Pigmentação</option>
           </select>
 
           <button
             onClick={agendar}
-            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition"
+            disabled={loading}
+            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
           >
-            Confirmar Agendamento
+            {loading
+              ? "Salvando..."
+              : "Confirmar Agendamento"}
           </button>
 
           {mensagem && (
