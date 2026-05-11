@@ -14,6 +14,11 @@ interface Agendamento {
 }
 
 export default function AdminPage() {
+  const [usuario, setUsuario] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const [logado, setLogado] = useState(false);
+
   const [agendamentos, setAgendamentos] =
     useState<Agendamento[]>([]);
 
@@ -41,9 +46,62 @@ export default function AdminPage() {
     carregarAgendamentos();
   }
 
+  function fazerLogin() {
+    if (
+      usuario === "admin" &&
+      senha === "123456"
+    ) {
+      setLogado(true);
+    } else {
+      alert("Usuário ou senha inválidos.");
+    }
+  }
+
   useEffect(() => {
-    carregarAgendamentos();
-  }, []);
+    if (logado) {
+      carregarAgendamentos();
+    }
+  }, [logado]);
+
+  if (!logado) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
+          <h1 className="text-4xl font-black text-yellow-500 text-center">
+            Login Admin
+          </h1>
+
+          <div className="space-y-5 mt-10">
+            <input
+              value={usuario}
+              onChange={(e) =>
+                setUsuario(e.target.value)
+              }
+              placeholder="Usuário"
+              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            />
+
+            <input
+              type="password"
+              value={senha}
+              onChange={(e) =>
+                setSenha(e.target.value)
+              }
+              placeholder="Senha"
+              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            />
+
+            <button
+              onClick={fazerLogin}
+              className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition"
+            >
+              Entrar
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
