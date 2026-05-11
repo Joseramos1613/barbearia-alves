@@ -143,7 +143,14 @@ useEffect(() => {
   }
   className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
 />
-
+<input
+  type="date"
+  value={dataAgendamento}
+  onChange={(e) =>
+    setDataAgendamento(e.target.value)
+  }
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+/>
 <select
   value={horario}
   onChange={(e) => setHorario(e.target.value)}
