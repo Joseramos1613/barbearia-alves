@@ -98,7 +98,25 @@ if (dataSelecionada.getDay() === 0) {
     setMensagem(
       "Agendamento realizado com sucesso!"
     );
+const mensagemWhats = `
+Olá, meu agendamento foi realizado!
 
+Nome: ${nome}
+Barbeiro: ${barbeiro}
+Serviço: ${servico}
+Data: ${dataAgendamento}
+Horário: ${horario}
+`;
+
+const telefoneBarbearia =
+  "5551992329691";
+
+window.open(
+  `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
+    mensagemWhats
+  )}`,
+  "_blank"
+);
     setNome("");
     setTelefone("");
     setBarbeiro("");
