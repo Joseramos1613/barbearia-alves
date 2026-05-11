@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "./supabase";
 
 export default function Home() {
@@ -8,11 +8,30 @@ export default function Home() {
   const [telefone, setTelefone] = useState("");
   const [barbeiro, setBarbeiro] = useState("");
   const [servico, setServico] = useState("");
+  const [horario, setHorario] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
+  const [horariosOcupados, setHorariosOcupados] =
+  useState<string[]>([]);
+async function carregarHorarios() {
+  const { data } = await supabase
+    .from("agendamentos")
+    .select("horario");
 
+  if (data) {
+    setHorariosOcupados(
+      data.map((item) => item.horario)
+    );
+  }
+}
   async function agendar() {
-    if (!nome || !telefone || !barbeiro || !servico) {
+    if (
+  !nome ||
+  !telefone ||
+  !barbeiro ||
+  !servico ||
+  !horario
+) {
       setMensagem("Preencha todos os campos.");
       return;
     }
@@ -27,6 +46,7 @@ export default function Home() {
           telefone,
           barbeiro,
           servico,
+horario,
         },
       ]);
 
@@ -44,8 +64,12 @@ export default function Home() {
     setTelefone("");
     setBarbeiro("");
     setServico("");
+    setHorario("");
+    carregarHorarios();
   }
-
+useEffect(() => {
+  carregarHorarios();
+}, []);
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
@@ -93,7 +117,31 @@ export default function Home() {
             <option>Corte + Barba</option>
             <option>Pigmentação</option>
           </select>
+<select
+  value={horario}
+  onChange={(e) => setHorario(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+>
+  <option value="">Escolha o horário</option>
 
+  {[
+    "09:00",
+    "10:00",
+    "11:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+  ]
+    .filter(
+      (hora) =>
+        !horariosOcupados.includes(hora)
+    )
+    .map((hora) => (
+      <option key={hora}>{hora}</option>
+    ))}
+</select>
           <button
             onClick={agendar}
             disabled={loading}
