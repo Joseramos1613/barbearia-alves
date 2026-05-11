@@ -3,8 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
+interface Agendamento {
+  id: number;
+  nome: string;
+  telefone: string;
+  barbeiro: string;
+  servico: string;
+  horario: string;
+  data_agendamento: string;
+}
+
 export default function AdminPage() {
-  const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const [agendamentos, setAgendamentos] =
+    useState<Agendamento[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   async function carregarAgendamentos() {
@@ -53,7 +65,7 @@ export default function AdminPage() {
                 key={agendamento.id}
                 className="bg-zinc-900 border border-zinc-800 rounded-[30px] p-8"
               >
-                <div className="grid md:grid-cols-4 gap-5">
+                <div className="grid md:grid-cols-3 gap-5">
                   <div>
                     <p className="text-zinc-500 text-sm">
                       Cliente
@@ -91,6 +103,26 @@ export default function AdminPage() {
 
                     <h2 className="text-2xl font-bold">
                       {agendamento.servico}
+                    </h2>
+                  </div>
+
+                  <div>
+                    <p className="text-zinc-500 text-sm">
+                      Data
+                    </p>
+
+                    <h2 className="text-2xl font-bold">
+                      {agendamento.data_agendamento}
+                    </h2>
+                  </div>
+
+                  <div>
+                    <p className="text-zinc-500 text-sm">
+                      Horário
+                    </p>
+
+                    <h2 className="text-2xl font-bold">
+                      {agendamento.horario}
                     </h2>
                   </div>
                 </div>
