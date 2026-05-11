@@ -10,32 +10,42 @@ export default function Home() {
   const [servico, setServico] = useState("");
   const [horario, setHorario] = useState("");
   const [dataAgendamento, setDataAgendamento] =
-  useState("");
+    useState("");
+
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
-  const [horariosOcupados, setHorariosOcupados] =
-  useState<string[]>([]);
-async function carregarHorarios() {
-  const { data } = await supabase
-    .from("agendamentos")
-    .select("horario");
 
-  if (data) {
-    setHorariosOcupados(
-      data.map((item) => item.horario)
-    );
+  const [horariosOcupados, setHorariosOcupados] =
+    useState<string[]>([]);
+
+  async function carregarHorarios() {
+    if (!dataAgendamento) return;
+
+    const { data } = await supabase
+      .from("agendamentos")
+      .select("horario, data_agendamento")
+      .eq("data_agendamento", dataAgendamento);
+
+    if (data) {
+      setHorariosOcupados(
+        data.map((item) => item.horario)
+      );
+    }
   }
-}
+
+  useEffect(() => {
+    carregarHorarios();
+  }, [dataAgendamento]);
+
   async function agendar() {
     if (
-  !nome ||
-  !telefone ||
-  !barbeiro ||
-  !servico ||
-  !horario
-  !horario ||
-!dataAgendamento
-) {
+      !nome ||
+      !telefone ||
+      !barbeiro ||
+      !servico ||
+      !horario ||
+      !dataAgendamento
+    ) {
       setMensagem("Preencha todos os campos.");
       return;
     }
@@ -50,8 +60,8 @@ async function carregarHorarios() {
           telefone,
           barbeiro,
           servico,
-horario,
-data_agendamento: dataAgendamento,
+          horario,
+          data_agendamento: dataAgendamento,
         },
       ]);
 
@@ -63,7 +73,9 @@ data_agendamento: dataAgendamento,
       return;
     }
 
-    setMensagem("Agendamento realizado com sucesso!");
+    setMensagem(
+      "Agendamento realizado com sucesso!"
+    );
 
     setNome("");
     setTelefone("");
@@ -71,11 +83,10 @@ data_agendamento: dataAgendamento,
     setServico("");
     setHorario("");
     setDataAgendamento("");
+
     carregarHorarios();
   }
-useEffect(() => {
-  carregarHorarios();
-}, []);
+
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
@@ -97,107 +108,103 @@ useEffect(() => {
 
           <input
             value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
+            onChange={(e) =>
+              setTelefone(e.target.value)
+            }
             placeholder="WhatsApp"
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
 
           <select
             value={barbeiro}
-            onChange={(e) => setBarbeiro(e.target.value)}
+            onChange={(e) =>
+              setBarbeiro(e.target.value)
+            }
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
-            <option value="">Escolha o barbeiro</option>
+            <option value="">
+              Escolha o barbeiro
+            </option>
+
             <option>José Ramos</option>
             <option>Pierre Ramos</option>
           </select>
 
           <select
             value={servico}
-            onChange={(e) => setServico(e.target.value)}
+            onChange={(e) =>
+              setServico(e.target.value)
+            }
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
-            <option value="">Escolha o serviço</option>
+            <option value="">
+              Escolha o serviço
+            </option>
+
             <option>Corte Masculino</option>
             <option>Barba</option>
             <option>Corte + Barba</option>
             <option>Pigmentação</option>
           </select>
+
+          <input
+            type="date"
+            value={dataAgendamento}
+            onChange={(e) =>
+              setDataAgendamento(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+          />
+
           <select
-  value={servico}
-  onChange={(e) => setServico(e.target.value)}
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
->
-  <option value="">Escolha o serviço</option>
-  <option>Corte Masculino</option>
-  <option>Barba</option>
-  <option>Corte + Barba</option>
-  <option>Pigmentação</option>
-</select>
+            value={horario}
+            onChange={(e) =>
+              setHorario(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+          >
+            <option value="">
+              Escolha o horário
+            </option>
 
-<input
-  type="date"
-  value={dataAgendamento}
-  onChange={(e) =>
-    setDataAgendamento(e.target.value)
-  }
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-/>
-<input
-  type="date"
-  value={dataAgendamento}
-  onChange={(e) =>
-    setDataAgendamento(e.target.value)
-  }
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-/>
+            {[
+              "09:00",
+              "10:00",
+              "11:00",
+              "13:00",
+              "14:00",
+              "15:00",
+              "16:00",
+              "17:00",
+            ]
+              .filter(
+                (hora) =>
+                  !horariosOcupados.includes(hora)
+              )
+              .map((hora) => (
+                <option key={hora}>
+                  {hora}
+                </option>
+              ))}
+          </select>
 
-<select
-  value={servico}
-  onChange={(e) => setServico(e.target.value)}
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
->
-  <option value="">Escolha o serviço</option>
+          <button
+            onClick={agendar}
+            disabled={loading}
+            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
+          >
+            {loading
+              ? "Salvando..."
+              : "Confirmar Agendamento"}
+          </button>
 
-  <option>Corte Masculino</option>
-  <option>Barba</option>
-  <option>Corte + Barba</option>
-  <option>Pigmentação</option>
-</select>
-
-<input
-  type="date"
-  value={dataAgendamento}
-  onChange={(e) =>
-    setDataAgendamento(e.target.value)
-  }
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-/>
-
-<select
-  value={horario}
-  onChange={(e) => setHorario(e.target.value)}
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
->
-  <option value="">Escolha o horário</option>
-
-  {[
-    "09:00",
-    "10:00",
-    "11:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-  ]
-    .filter(
-      (hora) =>
-        !horariosOcupados.includes(hora)
-    )
-    .map((hora) => (
-      <option key={hora}>
-        {hora}
-      </option>
-    ))}
-</select>
+          {mensagem && (
+            <div className="bg-green-500/20 border border-green-500 text-green-400 rounded-2xl p-4 text-center">
+              {mensagem}
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
