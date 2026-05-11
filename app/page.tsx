@@ -153,6 +153,28 @@ useEffect(() => {
 />
 
 <select
+  value={servico}
+  onChange={(e) => setServico(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+>
+  <option value="">Escolha o serviço</option>
+
+  <option>Corte Masculino</option>
+  <option>Barba</option>
+  <option>Corte + Barba</option>
+  <option>Pigmentação</option>
+</select>
+
+<input
+  type="date"
+  value={dataAgendamento}
+  onChange={(e) =>
+    setDataAgendamento(e.target.value)
+  }
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+/>
+
+<select
   value={horario}
   onChange={(e) => setHorario(e.target.value)}
   className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
@@ -174,26 +196,8 @@ useEffect(() => {
         !horariosOcupados.includes(hora)
     )
     .map((hora) => (
-      <option key={hora}>{hora}</option>
+      <option key={hora}>
+        {hora}
+      </option>
     ))}
 </select>
-          <button
-            onClick={agendar}
-            disabled={loading}
-            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
-          >
-            {loading
-              ? "Salvando..."
-              : "Confirmar Agendamento"}
-          </button>
-
-          {mensagem && (
-            <div className="bg-green-500/20 border border-green-500 text-green-400 rounded-2xl p-4 text-center">
-              {mensagem}
-            </div>
-          )}
-        </div>
-      </div>
-    </main>
-  );
-}
