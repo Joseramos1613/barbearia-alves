@@ -38,14 +38,12 @@ export default function Home() {
   }, [dataAgendamento]);
 
   async function agendar() {
-    const dataSelecionada =
-  new Date(dataAgendamento);
+    const hoje = new Date();
 
-const hoje = new Date();
+const hojeFormatado =
+  hoje.toISOString().split("T")[0];
 
-hoje.setHours(0, 0, 0, 0);
-
-if (dataSelecionada < hoje) {
+if (dataAgendamento < hojeFormatado) {
   setMensagem(
     "Não é possível agendar datas passadas."
   );
@@ -53,7 +51,12 @@ if (dataSelecionada < hoje) {
   return;
 }
 
-if (dataSelecionada.getDay() === 0) {
+const diaSemana =
+  new Date(
+    dataAgendamento + "T12:00:00"
+  ).getDay();
+
+if (diaSemana === 0) {
   setMensagem(
     "A barbearia não abre aos domingos."
   );
