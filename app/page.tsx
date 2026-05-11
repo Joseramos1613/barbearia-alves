@@ -38,6 +38,28 @@ export default function Home() {
   }, [dataAgendamento]);
 
   async function agendar() {
+    const dataSelecionada =
+  new Date(dataAgendamento);
+
+const hoje = new Date();
+
+hoje.setHours(0, 0, 0, 0);
+
+if (dataSelecionada < hoje) {
+  setMensagem(
+    "Não é possível agendar datas passadas."
+  );
+
+  return;
+}
+
+if (dataSelecionada.getDay() === 0) {
+  setMensagem(
+    "A barbearia não abre aos domingos."
+  );
+
+  return;
+}
     if (
       !nome ||
       !telefone ||
