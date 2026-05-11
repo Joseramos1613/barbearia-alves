@@ -23,6 +23,8 @@ export default function AdminPage() {
     useState<Agendamento[]>([]);
 
   const [loading, setLoading] = useState(true);
+  const [filtroData, setFiltroData] =
+  useState("");
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
@@ -192,12 +194,30 @@ export default function AdminPage() {
             </h2>
           </div>
         </div>
-
+<div className="mb-8">
+  <input
+    type="date"
+    value={filtroData}
+    onChange={(e) =>
+      setFiltroData(e.target.value)
+    }
+    className="bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+  />
+</div>
         {loading ? (
           <p>Carregando...</p>
         ) : (
           <div className="grid gap-6">
-            {agendamentos.map(
+            {agendamentos
+  .filter((agendamento) => {
+    if (!filtroData) return true;
+
+    return (
+      agendamento.data_agendamento ===
+      filtroData
+    );
+  })
+  .map(
               (agendamento) => (
                 <div
                   key={agendamento.id}
