@@ -19,13 +19,16 @@ export default function Home() {
     useState<string[]>([]);
 
   async function carregarHorarios() {
-    if (!dataAgendamento) return;
+    if (!dataAgendamento || !barbeiro) {
+      setHorariosOcupados([]);
+      return;
+    }
 
     const { data } = await supabase
-  .from("agendamentos")
-  .select("horario")
-  .eq("data_agendamento", dataAgendamento)
-  .eq("barbeiro", barbeiro);
+      .from("agendamentos")
+      .select("horario")
+      .eq("data_agendamento", dataAgendamento)
+      .eq("barbeiro", barbeiro);
 
     if (data) {
       setHorariosOcupados(
@@ -35,35 +38,36 @@ export default function Home() {
   }
 
   useEffect(() => {
-  carregarHorarios();
-}, [dataAgendamento, barbeiro]);
+    carregarHorarios();
+  }, [dataAgendamento, barbeiro]);
 
   async function agendar() {
     const hoje = new Date();
 
-const hojeFormatado =
-  hoje.toISOString().split("T")[0];
+    const hojeFormatado =
+      hoje.toISOString().split("T")[0];
 
-if (dataAgendamento < hojeFormatado) {
-  setMensagem(
-    "Não é possível agendar datas passadas."
-  );
+    if (dataAgendamento < hojeFormatado) {
+      setMensagem(
+        "Não é possível agendar datas passadas."
+      );
 
-  return;
-}
+      return;
+    }
 
-const diaSemana =
-  new Date(
-    dataAgendamento + "T12:00:00"
-  ).getDay();
+    const diaSemana =
+      new Date(
+        dataAgendamento + "T12:00:00"
+      ).getDay();
 
-if (diaSemana === 0) {
-  setMensagem(
-    "A barbearia não abre aos domingos."
-  );
+    if (diaSemana === 0) {
+      setMensagem(
+        "A barbearia não abre aos domingos."
+      );
 
-  return;
-}
+      return;
+    }
+
     if (
       !nome ||
       !telefone ||
@@ -102,7 +106,8 @@ if (diaSemana === 0) {
     setMensagem(
       "Agendamento realizado com sucesso!"
     );
-const mensagemWhats = `
+
+    const mensagemWhats = `
 Olá, meu agendamento foi realizado!
 
 Nome: ${nome}
@@ -112,15 +117,16 @@ Data: ${dataAgendamento}
 Horário: ${horario}
 `;
 
-const telefoneBarbearia =
-  "5551992329691";
+    const telefoneBarbearia =
+      "5551992329691";
 
-window.open(
-  `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
-    mensagemWhats
-  )}`,
-  "_blank"
-);
+    window.open(
+      `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
+        mensagemWhats
+      )}`,
+      "_blank"
+    );
+
     setNome("");
     setTelefone("");
     setBarbeiro("");
@@ -175,44 +181,44 @@ window.open(
           </select>
 
           <select
-  value={servico}
-  onChange={(e) =>
-    setServico(e.target.value)
-  }
-  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
->
-  <option value="">
-    Escolha o serviço
-  </option>
+            value={servico}
+            onChange={(e) =>
+              setServico(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+          >
+            <option value="">
+              Escolha o serviço
+            </option>
 
-  <option value="Corte social - 45">
-    Corte social - R$45
-  </option>
+            <option value="Corte social - 45">
+              Corte social - R$45
+            </option>
 
-  <option value="Barba - 40">
-    Barba - R$40
-  </option>
+            <option value="Barba - 40">
+              Barba - R$40
+            </option>
 
-  <option value="Corte + Barba - 85">
-    Corte + Barba - R$85
-  </option>
+            <option value="Corte + Barba - 85">
+              Corte + Barba - R$85
+            </option>
 
-  <option value="Sobrancelha - 15">
-    Sobrancelha - R$15
-  </option>
+            <option value="Sobrancelha - 15">
+              Sobrancelha - R$15
+            </option>
 
-  <option value="Corte Máquina - 30">
-    Corte Máquina - R$30
-  </option>
+            <option value="Corte Máquina - 30">
+              Corte Máquina - R$30
+            </option>
 
-  <option value="Corte Degradê - 50">
-    Corte Degradê - R$50
-  </option>
+            <option value="Corte Degradê - 50">
+              Corte Degradê - R$50
+            </option>
 
-  <option value="Corte Navalhado - 60">
-    Corte Navalhado - R$60
-  </option>
-</select>
+            <option value="Corte Navalhado - 60">
+              Corte Navalhado - R$60
+            </option>
+          </select>
 
           <input
             type="date"
