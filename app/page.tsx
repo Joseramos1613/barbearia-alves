@@ -9,6 +9,8 @@ export default function Home() {
   const [barbeiro, setBarbeiro] = useState("");
   const [servico, setServico] = useState("");
   const [horario, setHorario] = useState("");
+  const [dataAgendamento, setDataAgendamento] =
+  useState("");
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
   const [horariosOcupados, setHorariosOcupados] =
@@ -31,6 +33,8 @@ async function carregarHorarios() {
   !barbeiro ||
   !servico ||
   !horario
+  !horario ||
+!dataAgendamento
 ) {
       setMensagem("Preencha todos os campos.");
       return;
@@ -47,6 +51,7 @@ async function carregarHorarios() {
           barbeiro,
           servico,
 horario,
+data_agendamento: dataAgendamento,
         },
       ]);
 
@@ -65,6 +70,7 @@ horario,
     setBarbeiro("");
     setServico("");
     setHorario("");
+    setDataAgendamento("");
     carregarHorarios();
   }
 useEffect(() => {
@@ -117,6 +123,32 @@ useEffect(() => {
             <option>Corte + Barba</option>
             <option>Pigmentação</option>
           </select>
+          <select
+  value={servico}
+  onChange={(e) => setServico(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+>
+  <option value="">Escolha o serviço</option>
+  <option>Corte Masculino</option>
+  <option>Barba</option>
+  <option>Corte + Barba</option>
+  <option>Pigmentação</option>
+</select>
+
+<input
+  type="date"
+  value={dataAgendamento}
+  onChange={(e) =>
+    setDataAgendamento(e.target.value)
+  }
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+/>
+
+<select
+  value={horario}
+  onChange={(e) => setHorario(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+></select>
 <select
   value={horario}
   onChange={(e) => setHorario(e.target.value)}
