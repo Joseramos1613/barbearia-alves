@@ -47,21 +47,42 @@ export default function AdminPage() {
   }
 
   function fazerLogin() {
-    if (
-      usuario === "admin" &&
-      senha === "123456"
-    ) {
-      setLogado(true);
-    } else {
-      alert("Usuário ou senha inválidos.");
-    }
+  if (
+    usuario === "admin" &&
+    senha === "123456"
+  ) {
+    localStorage.setItem(
+      "admin-logado",
+      "true"
+    );
+
+    setLogado(true);
+  } else {
+    alert("Usuário ou senha inválidos.");
   }
+}
+function sair() {
+  localStorage.removeItem("admin-logado");
+
+  setLogado(false);
+}
 
   useEffect(() => {
-    if (logado) {
-      carregarAgendamentos();
-    }
-  }, [logado]);
+  const adminLogado =
+    localStorage.getItem("admin-logado");
+
+  if (adminLogado === "true") {
+    setLogado(true);
+
+    carregarAgendamentos();
+  }
+}, []);
+
+useEffect(() => {
+  if (logado) {
+    carregarAgendamentos();
+  }
+}, [logado]);
 
   if (!logado) {
     return (
@@ -110,9 +131,18 @@ export default function AdminPage() {
           Painel Administrativo
         </h1>
 
-        <p className="text-zinc-400 mb-10">
-          Barbearia Alves
-        </p>
+        <div className="flex items-center justify-between mb-10">
+  <p className="text-zinc-400">
+    Barbearia Alves
+  </p>
+
+  <button
+    onClick={sair}
+    className="bg-red-600 hover:bg-red-700 transition px-5 py-2 rounded-2xl font-bold"
+  >
+    Sair
+  </button>
+</div>
 
         {loading ? (
           <p>Carregando...</p>
