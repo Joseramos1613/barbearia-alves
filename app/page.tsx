@@ -22,9 +22,10 @@ export default function Home() {
     if (!dataAgendamento) return;
 
     const { data } = await supabase
-      .from("agendamentos")
-      .select("horario, data_agendamento")
-      .eq("data_agendamento", dataAgendamento);
+  .from("agendamentos")
+  .select("horario")
+  .eq("data_agendamento", dataAgendamento)
+  .eq("barbeiro", barbeiro);
 
     if (data) {
       setHorariosOcupados(
@@ -34,8 +35,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    carregarHorarios();
-  }, [dataAgendamento]);
+  carregarHorarios();
+}, [dataAgendamento, barbeiro]);
 
   async function agendar() {
     const hoje = new Date();
