@@ -17,40 +17,41 @@ export default function Home() {
 
   const [horariosOcupados, setHorariosOcupados] =
     useState<string[]>([]);
-    const [horariosBloqueados, setHorariosBloqueados] =
-  useState<string[]>([]);
 
- async function carregarHorarios() {
-  if (!dataAgendamento || !barbeiro) {
-    setHorariosOcupados([]);
-    setHorariosBloqueados([]);
-    return;
+  const [horariosBloqueados, setHorariosBloqueados] =
+    useState<string[]>([]);
+
+  async function carregarHorarios() {
+    if (!dataAgendamento || !barbeiro) {
+      setHorariosOcupados([]);
+      setHorariosBloqueados([]);
+      return;
+    }
+
+    const { data } = await supabase
+      .from("agendamentos")
+      .select("horario")
+      .eq("data_agendamento", dataAgendamento)
+      .eq("barbeiro", barbeiro);
+
+    if (data) {
+      setHorariosOcupados(
+        data.map((item) => item.horario)
+      );
+    }
+
+    const { data: bloqueios } = await supabase
+      .from("bloqueios")
+      .select("horario")
+      .eq("data", dataAgendamento)
+      .eq("barbeiro", barbeiro);
+
+    if (bloqueios) {
+      setHorariosBloqueados(
+        bloqueios.map((item) => item.horario)
+      );
+    }
   }
-
-  const { data } = await supabase
-    .from("agendamentos")
-    .select("horario")
-    .eq("data_agendamento", dataAgendamento)
-    .eq("barbeiro", barbeiro);
-
-  if (data) {
-    setHorariosOcupados(
-      data.map((item) => item.horario)
-    );
-  }
-
-  const { data: bloqueios } = await supabase
-    .from("bloqueios")
-    .select("horario")
-    .eq("data", dataAgendamento)
-    .eq("barbeiro", barbeiro);
-
-  if (bloqueios) {
-    setHorariosBloqueados(
-      bloqueios.map((item) => item.horario)
-    );
-  }
-}
 
   useEffect(() => {
     carregarHorarios();
@@ -66,20 +67,17 @@ export default function Home() {
       setMensagem(
         "Não é possível agendar datas passadas."
       );
-
       return;
     }
 
-    const diaSemana =
-      new Date(
-        dataAgendamento + "T12:00:00"
-      ).getDay();
+    const diaSemana = new Date(
+      dataAgendamento + "T12:00:00"
+    ).getDay();
 
     if (diaSemana === 0) {
       setMensagem(
         "A barbearia não abre aos domingos."
       );
-
       return;
     }
 
@@ -113,7 +111,10 @@ export default function Home() {
     setLoading(false);
 
     if (error) {
-      setMensagem("Erro ao salvar agendamento.");
+      setMensagem(
+        "Erro ao salvar agendamento."
+      );
+
       console.log(error);
       return;
     }
@@ -133,9 +134,9 @@ Horário: ${horario}
 `;
 
     const telefoneBarbearia =
-  barbeiro === "José Ramos"
-    ? "5551992329691"
-    : "5551999999999";
+      barbeiro === "José Ramos"
+        ? "5551992329691"
+        : "5551999999999";
 
     window.open(
       `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
@@ -168,7 +169,9 @@ Horário: ${horario}
         <div className="space-y-5 mt-10">
           <input
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={(e) =>
+              setNome(e.target.value)
+            }
             placeholder="Seu nome"
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
@@ -193,8 +196,13 @@ Horário: ${horario}
               Escolha o barbeiro
             </option>
 
-            <option>José Ramos</option>
-            <option>Pierre Ramos</option>
+            <option>
+              José Ramos
+            </option>
+
+            <option>
+              Pierre Ramos
+            </option>
           </select>
 
           <select
@@ -241,7 +249,9 @@ Horário: ${horario}
             type="date"
             value={dataAgendamento}
             onChange={(e) =>
-              setDataAgendamento(e.target.value)
+              setDataAgendamento(
+                e.target.value
+              )
             }
             className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
@@ -257,39 +267,43 @@ Horário: ${horario}
               Escolha o horário
             </option>
 
-            {barbeiro === "José Ramos"
-  ? [
-      "09:00",
-      "09:30",
-      "10:00",
-      "10:30",
-      "11:00",
-      "19:00",
-      "19:30",
-      "20:00",
-    ]
-  : [
-      "09:00",
-      "09:30",
-      "10:00",
-      "10:30",
-      "11:00",
-      "14:00",
-      "14:30",
-      "15:00",
-      "15:30",
-      "16:00",
-      "16:30",
-      "17:00",
-      "17:30",
-      "18:00",
-      "18:30",
-      "19:00",
-    ]}
+            {(barbeiro === "José Ramos"
+              ? [
+                  "09:00",
+                  "09:30",
+                  "10:00",
+                  "10:30",
+                  "11:00",
+                  "19:00",
+                  "19:30",
+                  "20:00",
+                ]
+              : [
+                  "09:00",
+                  "09:30",
+                  "10:00",
+                  "10:30",
+                  "11:00",
+                  "14:00",
+                  "14:30",
+                  "15:00",
+                  "15:30",
+                  "16:00",
+                  "16:30",
+                  "17:00",
+                  "17:30",
+                  "18:00",
+                  "18:30",
+                  "19:00",
+                ])
               .filter(
                 (hora) =>
-                  !horariosOcupados.includes(hora) &&
-!horariosBloqueados.includes(hora)
+                  !horariosOcupados.includes(
+                    hora
+                  ) &&
+                  !horariosBloqueados.includes(
+                    hora
+                  )
               )
               .map((hora) => (
                 <option key={hora}>
