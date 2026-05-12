@@ -28,17 +28,18 @@ export default function AdminPage() {
 
   const [dataSelecionada, setDataSelecionada] =
     useState(new Date());
-    const [dataBloqueio, setDataBloqueio] =
-  useState("");
 
-const [horarioBloqueio, setHorarioBloqueio] =
-  useState("");
+  const [dataBloqueio, setDataBloqueio] =
+    useState("");
 
-const [barbeiroBloqueio, setBarbeiroBloqueio] =
-  useState("");
+  const [horarioBloqueio, setHorarioBloqueio] =
+    useState("");
 
-const [motivoBloqueio, setMotivoBloqueio] =
-  useState("");
+  const [barbeiroBloqueio, setBarbeiroBloqueio] =
+    useState("");
+
+  const [motivoBloqueio, setMotivoBloqueio] =
+    useState("");
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
@@ -54,41 +55,53 @@ const [motivoBloqueio, setMotivoBloqueio] =
   }
 
   async function excluirAgendamento(id: number) {
-    async function bloquearHorario() {
-  if (
-    !dataBloqueio ||
-    !horarioBloqueio ||
-    !barbeiroBloqueio
-  ) {
-    alert("Preencha os campos");
-    return;
-  }
+    const { error } = await supabase
+      .from("agendamentos")
+      .delete()
+      .eq("id", id);
 
-  const { error } = await supabase
-    .from("bloqueios")
-    .insert([
-      {
-        data: dataBloqueio,
-        horario: horarioBloqueio,
-        barbeiro: barbeiroBloqueio,
-        motivo: motivoBloqueio,
-      },
-    ]);
+    if (error) {
+      alert("Erro ao excluir");
+      console.log(error);
+      return;
+    }
 
-  if (error) {
-    alert("Erro ao bloquear");
-    console.log(error);
-    return;
-  }
-
-  alert("Horário bloqueado!");
-
-  setDataBloqueio("");
-  setHorarioBloqueio("");
-  setBarbeiroBloqueio("");
-  setMotivoBloqueio("");
-}
     carregarAgendamentos();
+  }
+
+  async function bloquearHorario() {
+    if (
+      !dataBloqueio ||
+      !horarioBloqueio ||
+      !barbeiroBloqueio
+    ) {
+      alert("Preencha os campos");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("bloqueios")
+      .insert([
+        {
+          data: dataBloqueio,
+          horario: horarioBloqueio,
+          barbeiro: barbeiroBloqueio,
+          motivo: motivoBloqueio,
+        },
+      ]);
+
+    if (error) {
+      alert("Erro ao bloquear");
+      console.log(error);
+      return;
+    }
+
+    alert("Horário bloqueado!");
+
+    setDataBloqueio("");
+    setHorarioBloqueio("");
+    setBarbeiroBloqueio("");
+    setMotivoBloqueio("");
   }
 
   function fazerLogin() {
@@ -236,6 +249,90 @@ const [motivoBloqueio, setMotivoBloqueio] =
               R$ {faturamentoTotal}
             </h2>
           </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mb-10">
+          <h2 className="text-3xl font-black text-yellow-500 mb-6">
+            Bloquear Horário
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            <input
+              type="date"
+              value={dataBloqueio}
+              onChange={(e) =>
+                setDataBloqueio(e.target.value)
+              }
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            />
+
+            <select
+              value={horarioBloqueio}
+              onChange={(e) =>
+                setHorarioBloqueio(e.target.value)
+              }
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            >
+              <option value="">
+                Escolha o horário
+              </option>
+
+              {[
+                "09:00",
+                "10:00",
+                "11:00",
+                "13:00",
+                "14:00",
+                "15:00",
+                "16:00",
+                "17:00",
+              ].map((hora) => (
+                <option key={hora}>
+                  {hora}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={barbeiroBloqueio}
+              onChange={(e) =>
+                setBarbeiroBloqueio(
+                  e.target.value
+                )
+              }
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            >
+              <option value="">
+                Escolha o barbeiro
+              </option>
+
+              <option>
+                José Ramos
+              </option>
+
+              <option>
+                Pierre Ramos
+              </option>
+            </select>
+
+            <input
+              value={motivoBloqueio}
+              onChange={(e) =>
+                setMotivoBloqueio(
+                  e.target.value
+                )
+              }
+              placeholder="Motivo (opcional)"
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+            />
+          </div>
+
+          <button
+            onClick={bloquearHorario}
+            className="mt-6 bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black hover:scale-105 transition"
+          >
+            Bloquear Horário
+          </button>
         </div>
 
         <div className="mb-10 bg-zinc-900 p-5 rounded-3xl border border-zinc-800">
