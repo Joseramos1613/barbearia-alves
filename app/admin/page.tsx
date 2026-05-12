@@ -43,10 +43,16 @@ export default function AdminPage() {
   }
 
   async function excluirAgendamento(id: number) {
-    await supabase
+    const { error } = await supabase
       .from("agendamentos")
       .delete()
       .eq("id", id);
+
+    if (error) {
+      alert("Erro ao excluir agendamento");
+      console.log(error);
+      return;
+    }
 
     carregarAgendamentos();
   }
@@ -322,45 +328,16 @@ Aguardamos você 🔥
                       Enviar Lembrete
                     </button>
 
-                    <div className="flex gap-3 mt-6">
-  <button
-    onClick={() => {
-      const mensagem = `
-Olá ${agendamento.nome}, passando para lembrar do seu horário na Barbearia Alves 💈
-
-📅 Data: ${agendamento.data_agendamento}
-⏰ Horário: ${agendamento.horario}
-✂️ Serviço: ${agendamento.servico}
-
-Aguardamos você 🔥
-`;
-
-      window.open(
-        `https://wa.me/55${agendamento.telefone.replace(
-          /\D/g,
-          ""
-        )}?text=${encodeURIComponent(
-          mensagem
-        )}`,
-        "_blank"
-      );
-    }}
-    className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-2xl font-bold"
-  >
-    Enviar Lembrete
-  </button>
-
-  <button
-    onClick={() =>
-      excluirAgendamento(
-        agendamento.id
-      )
-    }
-    className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
-  >
-    Excluir Agendamento
-  </button>
-</div>
+                    <button
+                      onClick={() =>
+                        excluirAgendamento(
+                          agendamento.id
+                        )
+                      }
+                      className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
+                    >
+                      Excluir Agendamento
+                    </button>
                   </div>
                 </div>
               ))}
