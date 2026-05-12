@@ -1,5 +1,7 @@
 "use client";
 
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
@@ -23,8 +25,9 @@ export default function AdminPage() {
     useState<Agendamento[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [filtroData, setFiltroData] =
-  useState("");
+
+  const [dataSelecionada, setDataSelecionada] =
+    useState(new Date());
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
@@ -194,31 +197,35 @@ export default function AdminPage() {
             </h2>
           </div>
         </div>
-<div className="mb-8">
-  <input
-    type="date"
-    value={filtroData}
-    onChange={(e) =>
-      setFiltroData(e.target.value)
-    }
-    className="bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-  />
-</div>
+
+        <div className="mb-10 bg-zinc-900 p-5 rounded-3xl border border-zinc-800">
+          <Calendar
+            onChange={(value) =>
+              setDataSelecionada(
+                value as Date
+              )
+            }
+            value={dataSelecionada}
+          />
+        </div>
+
         {loading ? (
           <p>Carregando...</p>
         ) : (
           <div className="grid gap-6">
             {agendamentos
-  .filter((agendamento) => {
-    if (!filtroData) return true;
+              .filter((agendamento) => {
+                const dataFormatada =
+                  dataSelecionada
+                    .toISOString()
+                    .split("T")[0];
 
-    return (
-      agendamento.data_agendamento ===
-      filtroData
-    );
-  })
-  .map(
-              (agendamento) => (
+                return (
+                  agendamento.data_agendamento ===
+                  dataFormatada
+                );
+              })
+              .map((agendamento) => (
                 <div
                   key={agendamento.id}
                   className="bg-zinc-900 border border-zinc-800 rounded-[30px] p-8"
@@ -230,9 +237,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.nome
-                        }
+                        {agendamento.nome}
                       </h2>
                     </div>
 
@@ -242,9 +247,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.telefone
-                        }
+                        {agendamento.telefone}
                       </h2>
                     </div>
 
@@ -254,9 +257,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.barbeiro
-                        }
+                        {agendamento.barbeiro}
                       </h2>
                     </div>
 
@@ -266,9 +267,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.servico
-                        }
+                        {agendamento.servico}
                       </h2>
                     </div>
 
@@ -290,26 +289,52 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.horario
-                        }
+                        {agendamento.horario}
                       </h2>
                     </div>
                   </div>
 
-                  <button
-                    onClick={() =>
-                      excluirAgendamento(
-                        agendamento.id
-                      )
-                    }
-                    className="mt-6 bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
-                  >
-                    Excluir Agendamento
-                  </button>
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={() => {
+                        const mensagem = `
+Olá ${agendamento.nome}, passando para lembrar do seu horário na Barbearia Alves 💈
+
+📅 Data: ${agendamento.data_agendamento}
+⏰ Horário: ${agendamento.horario}
+✂️ Serviço: ${agendamento.servico}
+
+Aguardamos você 🔥
+`;
+
+                        window.open(
+                          `https://wa.me/55${agendamento.telefone.replace(
+                            /\D/g,
+                            ""
+                          )}?text=${encodeURIComponent(
+                            mensagem
+                          )}`,
+                          "_blank"
+                        );
+                      }}
+                      className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-2xl font-bold"
+                    >
+                      Enviar Lembrete
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        excluirAgendamento(
+                          agendamento.id
+                        )
+                      }
+                      className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
+                    >
+                      Excluir Agendamento
+                    </button>
+                  </div>
                 </div>
-              )
-            )}
+              ))}
           </div>
         )}
       </div>
