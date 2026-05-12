@@ -28,6 +28,17 @@ export default function AdminPage() {
 
   const [dataSelecionada, setDataSelecionada] =
     useState(new Date());
+    const [dataBloqueio, setDataBloqueio] =
+  useState("");
+
+const [horarioBloqueio, setHorarioBloqueio] =
+  useState("");
+
+const [barbeiroBloqueio, setBarbeiroBloqueio] =
+  useState("");
+
+const [motivoBloqueio, setMotivoBloqueio] =
+  useState("");
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
@@ -43,17 +54,40 @@ export default function AdminPage() {
   }
 
   async function excluirAgendamento(id: number) {
-    const { error } = await supabase
-      .from("agendamentos")
-      .delete()
-      .eq("id", id);
+    async function bloquearHorario() {
+  if (
+    !dataBloqueio ||
+    !horarioBloqueio ||
+    !barbeiroBloqueio
+  ) {
+    alert("Preencha os campos");
+    return;
+  }
 
-    if (error) {
-      alert("Erro ao excluir agendamento");
-      console.log(error);
-      return;
-    }
+  const { error } = await supabase
+    .from("bloqueios")
+    .insert([
+      {
+        data: dataBloqueio,
+        horario: horarioBloqueio,
+        barbeiro: barbeiroBloqueio,
+        motivo: motivoBloqueio,
+      },
+    ]);
 
+  if (error) {
+    alert("Erro ao bloquear");
+    console.log(error);
+    return;
+  }
+
+  alert("Horário bloqueado!");
+
+  setDataBloqueio("");
+  setHorarioBloqueio("");
+  setBarbeiroBloqueio("");
+  setMotivoBloqueio("");
+}
     carregarAgendamentos();
   }
 
