@@ -17,25 +17,40 @@ export default function Home() {
 
   const [horariosOcupados, setHorariosOcupados] =
     useState<string[]>([]);
+    const [horariosBloqueados, setHorariosBloqueados] =
+  useState<string[]>([]);
 
-  async function carregarHorarios() {
-    if (!dataAgendamento || !barbeiro) {
-      setHorariosOcupados([]);
-      return;
-    }
-
-    const { data } = await supabase
-      .from("agendamentos")
-      .select("horario")
-      .eq("data_agendamento", dataAgendamento)
-      .eq("barbeiro", barbeiro);
-
-    if (data) {
-      setHorariosOcupados(
-        data.map((item) => item.horario)
-      );
-    }
+ async function carregarHorarios() {
+  if (!dataAgendamento || !barbeiro) {
+    setHorariosOcupados([]);
+    setHorariosBloqueados([]);
+    return;
   }
+
+  const { data } = await supabase
+    .from("agendamentos")
+    .select("horario")
+    .eq("data_agendamento", dataAgendamento)
+    .eq("barbeiro", barbeiro);
+
+  if (data) {
+    setHorariosOcupados(
+      data.map((item) => item.horario)
+    );
+  }
+
+  const { data: bloqueios } = await supabase
+    .from("bloqueios")
+    .select("horario")
+    .eq("data", dataAgendamento)
+    .eq("barbeiro", barbeiro);
+
+  if (bloqueios) {
+    setHorariosBloqueados(
+      bloqueios.map((item) => item.horario)
+    );
+  }
+}
 
   useEffect(() => {
     carregarHorarios();
@@ -254,7 +269,8 @@ Horário: ${horario}
             ]
               .filter(
                 (hora) =>
-                  !horariosOcupados.includes(hora)
+                  !horariosOcupados.includes(hora) &&
+!horariosBloqueados.includes(hora)
               )
               .map((hora) => (
                 <option key={hora}>
