@@ -118,7 +118,9 @@ Horário: ${horario}
 `;
 
     const telefoneBarbearia =
-      "5551992329691";
+  barbeiro === "José Ramos"
+    ? "5551992329691"
+    : "5551999999999";
 
     window.open(
       `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
