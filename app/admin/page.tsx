@@ -4,7 +4,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 import { useEffect, useState } from "react";
-
 import { supabase } from "../supabase";
 
 import {
@@ -14,6 +13,11 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
 } from "recharts";
 
 interface Agendamento {
@@ -35,8 +39,7 @@ export default function AdminPage() {
   const [agendamentos, setAgendamentos] =
     useState<Agendamento[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [dataSelecionada, setDataSelecionada] =
     useState(new Date());
@@ -66,15 +69,7 @@ export default function AdminPage() {
     setLoading(false);
   }
 
-  async function excluirAgendamento(
-    id: number
-  ) {
-    const confirmar = confirm(
-      "Deseja realmente excluir?"
-    );
-
-    if (!confirmar) return;
-
+  async function excluirAgendamento(id: number) {
     const { error } = await supabase
       .from("agendamentos")
       .delete()
@@ -207,7 +202,32 @@ export default function AdminPage() {
       0
     );
 
-  const graficoData = [
+  const joseTotal =
+    agendamentos.filter(
+      (item) =>
+        item.barbeiro ===
+        "José Ramos"
+    ).length;
+
+  const pierreTotal =
+    agendamentos.filter(
+      (item) =>
+        item.barbeiro ===
+        "Pierre Ramos"
+    ).length;
+
+  const graficoBarbeiros = [
+    {
+      nome: "José",
+      total: joseTotal,
+    },
+    {
+      nome: "Pierre",
+      total: pierreTotal,
+    },
+  ];
+
+  const graficoFinanceiro = [
     {
       nome: "Agendamentos",
       total: totalAgendamentos,
@@ -218,46 +238,57 @@ export default function AdminPage() {
     },
   ];
 
+  const pieData = [
+    {
+      name: "José",
+      value: joseTotal,
+    },
+    {
+      name: "Pierre",
+      value: pierreTotal,
+    },
+  ];
+
+  const COLORS = [
+    "#eab308",
+    "#22c55e",
+  ];
+
   if (!logado) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.15),transparent_40%)]" />
-
-        <div className="relative w-full max-w-md bg-zinc-900/90 backdrop-blur-xl border border-yellow-500/20 rounded-[35px] p-10 shadow-2xl shadow-yellow-500/10">
-
-          <h1 className="text-5xl font-black text-yellow-500 text-center">
-            Admin
+        <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
+          <h1 className="text-4xl font-black text-yellow-500 text-center">
+            Login Admin
           </h1>
 
-          <p className="text-center text-zinc-400 mt-3">
-            Barbearia Alves
-          </p>
-
           <div className="space-y-5 mt-10">
-
             <input
               value={usuario}
               onChange={(e) =>
-                setUsuario(e.target.value)
+                setUsuario(
+                  e.target.value
+                )
               }
               placeholder="Usuário"
-              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none"
             />
 
             <input
               type="password"
               value={senha}
               onChange={(e) =>
-                setSenha(e.target.value)
+                setSenha(
+                  e.target.value
+                )
               }
               placeholder="Senha"
-              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+              className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none"
             />
 
             <button
               onClick={fazerLogin}
-              className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:bg-yellow-400 transition"
+              className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black"
             >
               Entrar
             </button>
@@ -268,17 +299,13 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6 relative overflow-hidden">
-
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.12),transparent_40%)]" />
-
-      <div className="relative max-w-7xl mx-auto">
+    <main className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-7xl mx-auto">
 
         <div className="flex items-center justify-between mb-10">
-
           <div>
-            <h1 className="text-6xl font-black text-yellow-500">
-              Dashboard
+            <h1 className="text-5xl font-black text-yellow-500">
+              Dashboard Premium
             </h1>
 
             <p className="text-zinc-400 mt-2">
@@ -288,97 +315,106 @@ export default function AdminPage() {
 
           <button
             onClick={sair}
-            className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
+            className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-2xl font-bold"
           >
             Sair
           </button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5 mb-10">
+        <div className="grid md:grid-cols-4 gap-5 mb-10">
 
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
             <p className="text-zinc-400">
-              Total de Agendamentos
+              Agendamentos
             </p>
 
-            <h2 className="text-6xl font-black text-yellow-500 mt-4">
+            <h2 className="text-5xl font-black text-yellow-500 mt-3">
               {totalAgendamentos}
             </h2>
           </div>
 
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
             <p className="text-zinc-400">
               Faturamento
             </p>
 
-            <h2 className="text-6xl font-black text-green-500 mt-4">
+            <h2 className="text-5xl font-black text-green-500 mt-3">
               R$ {faturamentoTotal}
             </h2>
           </div>
 
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
             <p className="text-zinc-400">
-              Clientes Hoje
+              José Ramos
             </p>
 
-            <h2 className="text-6xl font-black text-blue-500 mt-4">
-              {
-                agendamentos.filter(
-                  (item) =>
-                    item.data_agendamento ===
-                    dataSelecionada
-                      .toISOString()
-                      .split("T")[0]
-                ).length
-              }
+            <h2 className="text-5xl font-black text-blue-500 mt-3">
+              {joseTotal}
             </h2>
           </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+            <p className="text-zinc-400">
+              Pierre Ramos
+            </p>
+
+            <h2 className="text-5xl font-black text-purple-500 mt-3">
+              {pierreTotal}
+            </h2>
+          </div>
+
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 mb-10">
+        <div className="grid md:grid-cols-2 gap-6 mb-10">
 
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6">
-
-            <h2 className="text-3xl font-black text-yellow-500 mb-6">
-              Estatísticas
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 h-[350px]">
+            <h2 className="text-2xl font-black text-yellow-500 mb-5">
+              Financeiro
             </h2>
 
-            <div className="w-full h-[320px]">
-
-              <ResponsiveContainer>
-                <BarChart data={graficoData}>
-                  <XAxis dataKey="nome" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="total" />
-                </BarChart>
-              </ResponsiveContainer>
-
-            </div>
+            <ResponsiveContainer>
+              <BarChart data={graficoFinanceiro}>
+                <XAxis dataKey="nome" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#eab308" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6">
-
-            <h2 className="text-3xl font-black text-yellow-500 mb-6">
-              Calendário
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 h-[350px]">
+            <h2 className="text-2xl font-black text-yellow-500 mb-5">
+              Barbeiros
             </h2>
 
-            <Calendar
-              onChange={(value) =>
-                setDataSelecionada(
-                  value as Date
-                )
-              }
-              value={dataSelecionada}
-            />
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  outerRadius={100}
+                  label
+                >
+                  {pieData.map(
+                    (_, index) => (
+                      <Cell
+                        key={index}
+                        fill={
+                          COLORS[index]
+                        }
+                      />
+                    )
+                  )}
+                </Pie>
+
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+
         </div>
 
-        <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 mb-10">
-
+        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mb-10">
           <h2 className="text-3xl font-black text-yellow-500 mb-6">
             Bloquear Horário
           </h2>
@@ -393,37 +429,19 @@ export default function AdminPage() {
                   e.target.value
                 )
               }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4"
             />
 
-            <select
+            <input
               value={horarioBloqueio}
               onChange={(e) =>
                 setHorarioBloqueio(
                   e.target.value
                 )
               }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-            >
-              <option value="">
-                Escolha o horário
-              </option>
-
-              {[
-                "09:00",
-                "09:30",
-                "10:00",
-                "10:30",
-                "11:00",
-                "19:00",
-                "19:30",
-                "20:00",
-              ].map((hora) => (
-                <option key={hora}>
-                  {hora}
-                </option>
-              ))}
-            </select>
+              placeholder="Horário"
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4"
+            />
 
             <select
               value={barbeiroBloqueio}
@@ -432,7 +450,7 @@ export default function AdminPage() {
                   e.target.value
                 )
               }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4"
             >
               <option value="">
                 Escolha o barbeiro
@@ -455,26 +473,36 @@ export default function AdminPage() {
                 )
               }
               placeholder="Motivo"
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
+              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4"
             />
+
           </div>
 
           <button
             onClick={bloquearHorario}
-            className="mt-6 bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black transition"
+            className="mt-6 bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black"
           >
             Bloquear Horário
           </button>
+        </div>
+
+        <div className="mb-10 bg-zinc-900 p-5 rounded-3xl border border-zinc-800">
+          <Calendar
+            onChange={(value) =>
+              setDataSelecionada(
+                value as Date
+              )
+            }
+            value={dataSelecionada}
+          />
         </div>
 
         {loading ? (
           <p>Carregando...</p>
         ) : (
           <div className="grid gap-6">
-
             {agendamentos
               .filter((agendamento) => {
-
                 const dataFormatada =
                   dataSelecionada
                     .toISOString()
@@ -485,14 +513,13 @@ export default function AdminPage() {
                   dataFormatada
                 );
               })
-              .map((agendamento) => (
 
+              .map((agendamento) => (
                 <div
                   key={agendamento.id}
-                  className="bg-zinc-900/90 border border-zinc-800 rounded-[35px] p-8 shadow-xl"
+                  className="bg-zinc-900 border border-zinc-800 rounded-[30px] p-8"
                 >
-
-                  <div className="grid md:grid-cols-3 gap-6">
+                  <div className="grid md:grid-cols-3 gap-5">
 
                     <div>
                       <p className="text-zinc-500 text-sm">
@@ -555,13 +582,13 @@ export default function AdminPage() {
                         {agendamento.horario}
                       </h2>
                     </div>
+
                   </div>
 
-                  <div className="flex flex-wrap gap-3 mt-8">
+                  <div className="flex flex-wrap gap-3 mt-6">
 
                     <button
                       onClick={() => {
-
                         const mensagem = `
 Olá ${agendamento.nome}, passando para lembrar do seu horário na Barbearia Alves 💈
 
@@ -582,14 +609,13 @@ Aguardamos você 🔥
                           "_blank"
                         );
                       }}
-                      className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-2xl font-bold"
+                      className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-2xl font-bold"
                     >
                       WhatsApp
                     </button>
 
                     <button
                       onClick={() => {
-
                         const novoHorario =
                           prompt(
                             "Novo horário:",
@@ -604,7 +630,7 @@ Aguardamos você 🔥
                           novoHorario
                         );
                       }}
-                      className="bg-yellow-500 hover:bg-yellow-400 text-black transition px-6 py-3 rounded-2xl font-bold"
+                      className="bg-yellow-500 text-black px-6 py-3 rounded-2xl font-bold"
                     >
                       Editar
                     </button>
@@ -615,7 +641,7 @@ Aguardamos você 🔥
                           agendamento.id
                         )
                       }
-                      className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
+                      className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl font-bold"
                     >
                       Excluir
                     </button>
@@ -625,7 +651,7 @@ Aguardamos você 🔥
               ))}
           </div>
         )}
-      </div>
+           </div>
     </main>
   );
 }
