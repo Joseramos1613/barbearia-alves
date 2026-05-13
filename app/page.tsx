@@ -156,188 +156,186 @@ Horário: ${horario}
   }
 
   return (
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl bg-zinc-900 border border-yellow-500/20 rounded-[30px] p-10 shadow-2xl">
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.15),transparent_40%)]" />
+        <img
+          src="/logo.png"
+          alt="Barbearia Alves"
+          className="w-40 mx-auto mb-6"
+        />
 
-      <div className="relative z-10 flex items-center justify-center p-6 min-h-screen">
-        <div className="w-full max-w-2xl bg-zinc-900/90 backdrop-blur-xl border border-yellow-500/20 shadow-2xl shadow-yellow-500/10 rounded-[35px] p-10">
+        <h1 className="text-5xl font-black text-yellow-500 text-center">
+          Barbearia Alves
+        </h1>
 
-          <div className="text-center">
-            <h1 className="text-6xl font-black text-yellow-500 tracking-tight">
-              Barbearia Alves
-            </h1>
+        <p className="text-center text-zinc-400 mt-3">
+          Av. Ruda, 624
+        </p>
 
-            <p className="text-zinc-400 mt-4 text-lg">
-              Estilo • Precisão • Elegância
-            </p>
+        <div className="space-y-5 mt-10">
 
-            <div className="w-32 h-1 bg-yellow-500 mx-auto rounded-full mt-6" />
-          </div>
+          <input
+            value={nome}
+            onChange={(e) =>
+              setNome(e.target.value)
+            }
+            placeholder="Seu nome"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          />
 
-          <div className="space-y-5 mt-12">
+          <input
+            value={telefone}
+            onChange={(e) =>
+              setTelefone(e.target.value)
+            }
+            placeholder="WhatsApp"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          />
 
-            <input
-              value={nome}
-              onChange={(e) =>
-                setNome(e.target.value)
-              }
-              placeholder="Seu nome"
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            />
+          <select
+            value={barbeiro}
+            onChange={(e) =>
+              setBarbeiro(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          >
+            <option value="">
+              Escolha o barbeiro
+            </option>
 
-            <input
-              value={telefone}
-              onChange={(e) =>
-                setTelefone(e.target.value)
-              }
-              placeholder="WhatsApp"
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            />
+            <option>
+              José Ramos
+            </option>
 
-            <select
-              value={barbeiro}
-              onChange={(e) =>
-                setBarbeiro(e.target.value)
-              }
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            >
-              <option value="">
-                Escolha o barbeiro
-              </option>
+            <option>
+              Pierre Ramos
+            </option>
+          </select>
 
-              <option>
-                José Ramos
-              </option>
+          <select
+            value={servico}
+            onChange={(e) =>
+              setServico(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          >
+            <option value="">
+              Escolha o serviço
+            </option>
 
-              <option>
-                Pierre Ramos
-              </option>
-            </select>
+            <option value="Corte social - 45">
+              Corte social - R$45
+            </option>
 
-            <select
-              value={servico}
-              onChange={(e) =>
-                setServico(e.target.value)
-              }
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            >
-              <option value="">
-                Escolha o serviço
-              </option>
+            <option value="Barba - 40">
+              Barba - R$40
+            </option>
 
-              <option value="Corte social - 45">
-                Corte social - R$45
-              </option>
+            <option value="Corte + Barba - 85">
+              Corte + Barba - R$85
+            </option>
 
-              <option value="Barba - 40">
-                Barba - R$40
-              </option>
+            <option value="Sobrancelha - 15">
+              Sobrancelha - R$15
+            </option>
 
-              <option value="Corte + Barba - 85">
-                Corte + Barba - R$85
-              </option>
+            <option value="Corte Máquina - 30">
+              Corte Máquina - R$30
+            </option>
 
-              <option value="Sobrancelha - 15">
-                Sobrancelha - R$15
-              </option>
+            <option value="Corte Degradê - 50">
+              Corte Degradê - R$50
+            </option>
 
-              <option value="Corte Máquina - 30">
-                Corte Máquina - R$30
-              </option>
+            <option value="Corte Navalhado - 60">
+              Corte Navalhado - R$60
+            </option>
+          </select>
 
-              <option value="Corte Degradê - 50">
-                Corte Degradê - R$50
-              </option>
+          <input
+            type="date"
+            value={dataAgendamento}
+            onChange={(e) =>
+              setDataAgendamento(
+                e.target.value
+              )
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          />
 
-              <option value="Corte Navalhado - 60">
-                Corte Navalhado - R$60
-              </option>
-            </select>
+          <select
+            value={horario}
+            onChange={(e) =>
+              setHorario(e.target.value)
+            }
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+          >
+            <option value="">
+              Escolha o horário
+            </option>
 
-            <input
-              type="date"
-              value={dataAgendamento}
-              onChange={(e) =>
-                setDataAgendamento(
-                  e.target.value
-                )
-              }
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            />
+            {(barbeiro === "José Ramos"
+              ? [
+                  "09:00",
+                  "09:30",
+                  "10:00",
+                  "10:30",
+                  "11:00",
+                  "19:00",
+                  "19:30",
+                  "20:00",
+                ]
+              : [
+                  "09:00",
+                  "09:30",
+                  "10:00",
+                  "10:30",
+                  "11:00",
+                  "14:00",
+                  "14:30",
+                  "15:00",
+                  "15:30",
+                  "16:00",
+                  "16:30",
+                  "17:00",
+                  "17:30",
+                  "18:00",
+                  "18:30",
+                  "19:00",
+                ])
+              .filter(
+                (hora) =>
+                  !horariosOcupados.includes(
+                    hora
+                  ) &&
+                  !horariosBloqueados.includes(
+                    hora
+                  )
+              )
+              .map((hora) => (
+                <option key={hora}>
+                  {hora}
+                </option>
+              ))}
+          </select>
 
-            <select
-              value={horario}
-              onChange={(e) =>
-                setHorario(e.target.value)
-              }
-              className="w-full bg-black/70 border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
-            >
-              <option value="">
-                Escolha o horário
-              </option>
+          <button
+            onClick={agendar}
+            disabled={loading}
+            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl font-black text-lg transition hover:scale-105 disabled:opacity-50"
+          >
+            {loading
+              ? "Salvando..."
+              : "Confirmar Agendamento"}
+          </button>
 
-              {(barbeiro === "José Ramos"
-                ? [
-                    "09:00",
-                    "09:30",
-                    "10:00",
-                    "10:30",
-                    "11:00",
-                    "19:00",
-                    "19:30",
-                    "20:00",
-                  ]
-                : [
-                    "09:00",
-                    "09:30",
-                    "10:00",
-                    "10:30",
-                    "11:00",
-                    "14:00",
-                    "14:30",
-                    "15:00",
-                    "15:30",
-                    "16:00",
-                    "16:30",
-                    "17:00",
-                    "17:30",
-                    "18:00",
-                    "18:30",
-                    "19:00",
-                  ])
-                .filter(
-                  (hora) =>
-                    !horariosOcupados.includes(
-                      hora
-                    ) &&
-                    !horariosBloqueados.includes(
-                      hora
-                    )
-                )
-                .map((hora) => (
-                  <option key={hora}>
-                    {hora}
-                  </option>
-                ))}
-            </select>
+          {mensagem && (
+            <div className="bg-green-500/20 border border-green-500 text-green-400 rounded-2xl p-4 text-center">
+              {mensagem}
+            </div>
+          )}
 
-            <button
-              onClick={agendar}
-              disabled={loading}
-              className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-5 rounded-2xl font-black text-xl transition hover:scale-[1.02] disabled:opacity-50 shadow-lg shadow-yellow-500/20"
-            >
-              {loading
-                ? "Salvando..."
-                : "Confirmar Agendamento"}
-            </button>
-
-            {mensagem && (
-              <div className="bg-green-500/20 border border-green-500 text-green-400 rounded-2xl p-4 text-center font-semibold">
-                {mensagem}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </main>
