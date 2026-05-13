@@ -5,6 +5,15 @@ import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
 interface Agendamento {
   id: number;
   nome: string;
@@ -19,33 +28,45 @@ export default function AdminPage() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
 
-  const [logado, setLogado] = useState(false);
+  const [logado, setLogado] =
+    useState(false);
 
   const [agendamentos, setAgendamentos] =
     useState<Agendamento[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [dataSelecionada, setDataSelecionada] =
-    useState(new Date());
+  const [
+    dataSelecionada,
+    setDataSelecionada,
+  ] = useState(new Date());
 
   const [dataBloqueio, setDataBloqueio] =
     useState("");
 
-  const [horarioBloqueio, setHorarioBloqueio] =
-    useState("");
+  const [
+    horarioBloqueio,
+    setHorarioBloqueio,
+  ] = useState("");
 
-  const [barbeiroBloqueio, setBarbeiroBloqueio] =
-    useState("");
+  const [
+    barbeiroBloqueio,
+    setBarbeiroBloqueio,
+  ] = useState("");
 
-  const [motivoBloqueio, setMotivoBloqueio] =
-    useState("");
+  const [
+    motivoBloqueio,
+    setMotivoBloqueio,
+  ] = useState("");
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
       .from("agendamentos")
       .select("*")
-      .order("id", { ascending: false });
+      .order("id", {
+        ascending: false,
+      });
 
     if (!error && data) {
       setAgendamentos(data);
@@ -54,7 +75,9 @@ export default function AdminPage() {
     setLoading(false);
   }
 
-  async function excluirAgendamento(id: number) {
+  async function excluirAgendamento(
+    id: number
+  ) {
     const { error } = await supabase
       .from("agendamentos")
       .delete()
@@ -165,6 +188,42 @@ export default function AdminPage() {
       0
     );
 
+  const faturamentoBarbeiros = [
+    {
+      nome: "José",
+      valor: agendamentos
+        .filter(
+          (item) =>
+            item.barbeiro ===
+            "José Ramos"
+        )
+        .reduce((total, item) => {
+          const valor = Number(
+            item.servico.split("-")[1]
+          );
+
+          return total + valor;
+        }, 0),
+    },
+
+    {
+      nome: "Pierre",
+      valor: agendamentos
+        .filter(
+          (item) =>
+            item.barbeiro ===
+            "Pierre Ramos"
+        )
+        .reduce((total, item) => {
+          const valor = Number(
+            item.servico.split("-")[1]
+          );
+
+          return total + valor;
+        }, 0),
+    },
+  ];
+
   if (!logado) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
@@ -249,231 +308,42 @@ export default function AdminPage() {
               R$ {faturamentoTotal}
             </h2>
           </div>
-        </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mb-10">
-          <h2 className="text-3xl font-black text-yellow-500 mb-6">
-            Bloquear Horário
-          </h2>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:col-span-2">
+            <h2 className="text-3xl font-black text-yellow-500 mb-6">
+              Faturamento por Barbeiro
+            </h2>
 
-          <div className="grid md:grid-cols-2 gap-5">
-            <input
-              type="date"
-              value={dataBloqueio}
-              onChange={(e) =>
-                setDataBloqueio(e.target.value)
-              }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-            />
-
-            <select
-              value={horarioBloqueio}
-              onChange={(e) =>
-                setHorarioBloqueio(e.target.value)
-              }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-            >
-              <option value="">
-                Escolha o horário
-              </option>
-
-              {[
-                "09:00",
-                "10:00",
-                "11:00",
-                "13:00",
-                "14:00",
-                "15:00",
-                "16:00",
-                "17:00",
-              ].map((hora) => (
-                <option key={hora}>
-                  {hora}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={barbeiroBloqueio}
-              onChange={(e) =>
-                setBarbeiroBloqueio(
-                  e.target.value
-                )
-              }
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-            >
-              <option value="">
-                Escolha o barbeiro
-              </option>
-
-              <option>
-                José Ramos
-              </option>
-
-              <option>
-                Pierre Ramos
-              </option>
-            </select>
-
-            <input
-              value={motivoBloqueio}
-              onChange={(e) =>
-                setMotivoBloqueio(
-                  e.target.value
-                )
-              }
-              placeholder="Motivo (opcional)"
-              className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
-            />
-          </div>
-
-          <button
-            onClick={bloquearHorario}
-            className="mt-6 bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black hover:scale-105 transition"
-          >
-            Bloquear Horário
-          </button>
-        </div>
-
-        <div className="mb-10 bg-zinc-900 p-5 rounded-3xl border border-zinc-800">
-          <Calendar
-            onChange={(value) =>
-              setDataSelecionada(
-                value as Date
-              )
-            }
-            value={dataSelecionada}
-          />
-        </div>
-
-        {loading ? (
-          <p>Carregando...</p>
-        ) : (
-          <div className="grid gap-6">
-            {agendamentos
-              .filter((agendamento) => {
-                const dataFormatada =
-                  dataSelecionada
-                    .toISOString()
-                    .split("T")[0];
-
-                return (
-                  agendamento.data_agendamento ===
-                  dataFormatada
-                );
-              })
-              .map((agendamento) => (
-                <div
-                  key={agendamento.id}
-                  className="bg-zinc-900 border border-zinc-800 rounded-[30px] p-8"
+            <div className="w-full h-[300px]">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+                <BarChart
+                  data={
+                    faturamentoBarbeiros
+                  }
                 >
-                  <div className="grid md:grid-cols-3 gap-5">
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        Cliente
-                      </p>
+                  <XAxis dataKey="nome" />
 
-                      <h2 className="text-2xl font-bold">
-                        {agendamento.nome}
-                      </h2>
-                    </div>
+                  <YAxis />
 
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        WhatsApp
-                      </p>
+                  <Tooltip />
 
-                      <h2 className="text-2xl font-bold">
-                        {agendamento.telefone}
-                      </h2>
-                    </div>
-
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        Barbeiro
-                      </p>
-
-                      <h2 className="text-2xl font-bold">
-                        {agendamento.barbeiro}
-                      </h2>
-                    </div>
-
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        Serviço
-                      </p>
-
-                      <h2 className="text-2xl font-bold">
-                        {agendamento.servico}
-                      </h2>
-                    </div>
-
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        Data
-                      </p>
-
-                      <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.data_agendamento
-                        }
-                      </h2>
-                    </div>
-
-                    <div>
-                      <p className="text-zinc-500 text-sm">
-                        Horário
-                      </p>
-
-                      <h2 className="text-2xl font-bold">
-                        {agendamento.horario}
-                      </h2>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 mt-6">
-                    <button
-                      onClick={() => {
-                        const mensagem = `
-Olá ${agendamento.nome}, passando para lembrar do seu horário na Barbearia Alves 💈
-
-📅 Data: ${agendamento.data_agendamento}
-⏰ Horário: ${agendamento.horario}
-✂️ Serviço: ${agendamento.servico}
-
-Aguardamos você 🔥
-`;
-
-                        window.open(
-                          `https://wa.me/55${agendamento.telefone.replace(
-                            /\D/g,
-                            ""
-                          )}?text=${encodeURIComponent(
-                            mensagem
-                          )}`,
-                          "_blank"
-                        );
-                      }}
-                      className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-2xl font-bold"
-                    >
-                      Enviar Lembrete
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        excluirAgendamento(
-                          agendamento.id
-                        )
-                      }
-                      className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-2xl font-bold"
-                    >
-                      Excluir Agendamento
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  <Bar
+                    dataKey="valor"
+                    radius={[
+                      10,
+                      10,
+                      0,
+                      0,
+                    ]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </main>
   );
