@@ -114,8 +114,6 @@ export default function Home() {
       setMensagem(
         "Erro ao salvar agendamento."
       );
-
-      console.log(error);
       return;
     }
 
@@ -133,13 +131,8 @@ Data: ${dataAgendamento}
 Horário: ${horario}
 `;
 
-    const telefoneBarbearia =
-      barbeiro === "José Ramos"
-        ? "5551992329691"
-        : "5551999999999";
-
     window.open(
-      `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
+      `https://wa.me/5551992329691?text=${encodeURIComponent(
         mensagemWhats
       )}`,
       "_blank"
@@ -157,12 +150,12 @@ Horário: ${horario}
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10 shadow-2xl">
+      <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
 
         <img
           src="/logo.png"
           alt="Logo Barbearia Alves"
-          className="w-44 mx-auto mb-6"
+          className="w-40 mx-auto mb-6"
         />
 
         <h1 className="text-5xl font-black text-yellow-500 text-center">
@@ -233,22 +226,6 @@ Horário: ${horario}
 
             <option value="Corte + Barba - 85">
               Corte + Barba - R$85
-            </option>
-
-            <option value="Sobrancelha - 15">
-              Sobrancelha - R$15
-            </option>
-
-            <option value="Corte Máquina - 30">
-              Corte Máquina - R$30
-            </option>
-
-            <option value="Corte Degradê - 50">
-              Corte Degradê - R$50
-            </option>
-
-            <option value="Corte Navalhado - 60">
-              Corte Navalhado - R$60
             </option>
           </select>
 
@@ -322,7 +299,7 @@ Horário: ${horario}
           <button
             onClick={agendar}
             disabled={loading}
-            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
+            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition"
           >
             {loading
               ? "Salvando..."
@@ -339,8 +316,3 @@ Horário: ${horario}
     </main>
   );
 }
-<img
-  src="/logo.png"
-  alt="Logo"
-  className="w-40 mx-auto mb-6"
-/>
