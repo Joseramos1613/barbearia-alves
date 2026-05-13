@@ -4,7 +4,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
-
 import {
   BarChart,
   Bar,
@@ -28,45 +27,33 @@ export default function AdminPage() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
 
-  const [logado, setLogado] =
-    useState(false);
+  const [logado, setLogado] = useState(false);
 
   const [agendamentos, setAgendamentos] =
     useState<Agendamento[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [
-    dataSelecionada,
-    setDataSelecionada,
-  ] = useState(new Date());
+  const [dataSelecionada, setDataSelecionada] =
+    useState(new Date());
 
   const [dataBloqueio, setDataBloqueio] =
     useState("");
 
-  const [
-    horarioBloqueio,
-    setHorarioBloqueio,
-  ] = useState("");
+  const [horarioBloqueio, setHorarioBloqueio] =
+    useState("");
 
-  const [
-    barbeiroBloqueio,
-    setBarbeiroBloqueio,
-  ] = useState("");
+  const [barbeiroBloqueio, setBarbeiroBloqueio] =
+    useState("");
 
-  const [
-    motivoBloqueio,
-    setMotivoBloqueio,
-  ] = useState("");
+  const [motivoBloqueio, setMotivoBloqueio] =
+    useState("");
 
   async function carregarAgendamentos() {
     const { data, error } = await supabase
       .from("agendamentos")
       .select("*")
-      .order("id", {
-        ascending: false,
-      });
+      .order("id", { ascending: false });
 
     if (!error && data) {
       setAgendamentos(data);
@@ -75,9 +62,7 @@ export default function AdminPage() {
     setLoading(false);
   }
 
-  async function excluirAgendamento(
-    id: number
-  ) {
+  async function excluirAgendamento(id: number) {
     const { error } = await supabase
       .from("agendamentos")
       .delete()
@@ -88,6 +73,28 @@ export default function AdminPage() {
       console.log(error);
       return;
     }
+
+    carregarAgendamentos();
+  }
+
+  async function editarHorario(
+    id: number,
+    novoHorario: string
+  ) {
+    const { error } = await supabase
+      .from("agendamentos")
+      .update({
+        horario: novoHorario,
+      })
+      .eq("id", id);
+
+    if (error) {
+      alert("Erro ao editar");
+      console.log(error);
+      return;
+    }
+
+    alert("Horário atualizado!");
 
     carregarAgendamentos();
   }
@@ -139,9 +146,7 @@ export default function AdminPage() {
 
       setLogado(true);
     } else {
-      alert(
-        "Usuário ou senha inválidos."
-      );
+      alert("Usuário ou senha inválidos.");
     }
   }
 
@@ -190,7 +195,7 @@ export default function AdminPage() {
       0
     );
 
-  const dadosGrafico = [
+  const graficoData = [
     {
       nome: "Agendamentos",
       total: totalAgendamentos,
@@ -289,27 +294,16 @@ export default function AdminPage() {
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mb-10">
           <h2 className="text-3xl font-black text-yellow-500 mb-6">
-            Desempenho da Barbearia
+            Estatísticas
           </h2>
 
           <div className="w-full h-[300px]">
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-            >
-              <BarChart
-                data={dadosGrafico}
-              >
+            <ResponsiveContainer>
+              <BarChart data={graficoData}>
                 <XAxis dataKey="nome" />
                 <YAxis />
                 <Tooltip />
-
-                <Bar
-                  dataKey="total"
-                  radius={[
-                    10, 10, 0, 0,
-                  ]}
-                />
+                <Bar dataKey="total" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -325,9 +319,7 @@ export default function AdminPage() {
               type="date"
               value={dataBloqueio}
               onChange={(e) =>
-                setDataBloqueio(
-                  e.target.value
-                )
+                setDataBloqueio(e.target.value)
               }
               className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
             />
@@ -335,9 +327,7 @@ export default function AdminPage() {
             <select
               value={horarioBloqueio}
               onChange={(e) =>
-                setHorarioBloqueio(
-                  e.target.value
-                )
+                setHorarioBloqueio(e.target.value)
               }
               className="bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
             >
@@ -351,16 +341,6 @@ export default function AdminPage() {
                 "10:00",
                 "10:30",
                 "11:00",
-                "14:00",
-                "14:30",
-                "15:00",
-                "15:30",
-                "16:00",
-                "16:30",
-                "17:00",
-                "17:30",
-                "18:00",
-                "18:30",
                 "19:00",
                 "19:30",
                 "20:00",
@@ -452,9 +432,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.nome
-                        }
+                        {agendamento.nome}
                       </h2>
                     </div>
 
@@ -464,9 +442,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.telefone
-                        }
+                        {agendamento.telefone}
                       </h2>
                     </div>
 
@@ -476,9 +452,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.barbeiro
-                        }
+                        {agendamento.barbeiro}
                       </h2>
                     </div>
 
@@ -488,9 +462,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.servico
-                        }
+                        {agendamento.servico}
                       </h2>
                     </div>
 
@@ -512,9 +484,7 @@ export default function AdminPage() {
                       </p>
 
                       <h2 className="text-2xl font-bold">
-                        {
-                          agendamento.horario
-                        }
+                        {agendamento.horario}
                       </h2>
                     </div>
                   </div>
@@ -545,6 +515,27 @@ Aguardamos você 🔥
                       className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-2xl font-bold"
                     >
                       Enviar Lembrete
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const novoHorario =
+                          prompt(
+                            "Novo horário:",
+                            agendamento.horario
+                          );
+
+                        if (!novoHorario)
+                          return;
+
+                        editarHorario(
+                          agendamento.id,
+                          novoHorario
+                        );
+                      }}
+                      className="bg-yellow-500 text-black hover:bg-yellow-400 transition px-6 py-3 rounded-2xl font-bold"
+                    >
+                      Editar Horário
                     </button>
 
                     <button
