@@ -157,12 +157,12 @@ Horário: ${horario}
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-zinc-900 border border-yellow-500/20 rounded-[30px] p-10 shadow-2xl">
+      <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10 shadow-2xl">
 
         <img
           src="/logo.png"
-          alt="Barbearia Alves"
-          className="w-40 mx-auto mb-6"
+          alt="Logo Barbearia Alves"
+          className="w-44 mx-auto mb-6"
         />
 
         <h1 className="text-5xl font-black text-yellow-500 text-center">
@@ -174,14 +174,13 @@ Horário: ${horario}
         </p>
 
         <div className="space-y-5 mt-10">
-
           <input
             value={nome}
             onChange={(e) =>
               setNome(e.target.value)
             }
             placeholder="Seu nome"
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
 
           <input
@@ -190,7 +189,7 @@ Horário: ${horario}
               setTelefone(e.target.value)
             }
             placeholder="WhatsApp"
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
 
           <select
@@ -198,7 +197,7 @@ Horário: ${horario}
             onChange={(e) =>
               setBarbeiro(e.target.value)
             }
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
             <option value="">
               Escolha o barbeiro
@@ -218,7 +217,7 @@ Horário: ${horario}
             onChange={(e) =>
               setServico(e.target.value)
             }
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
             <option value="">
               Escolha o serviço
@@ -261,7 +260,7 @@ Horário: ${horario}
                 e.target.value
               )
             }
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           />
 
           <select
@@ -269,7 +268,7 @@ Horário: ${horario}
             onChange={(e) =>
               setHorario(e.target.value)
             }
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500 transition"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-5 py-4 outline-none focus:border-yellow-500"
           >
             <option value="">
               Escolha o horário
@@ -323,7 +322,7 @@ Horário: ${horario}
           <button
             onClick={agendar}
             disabled={loading}
-            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl font-black text-lg transition hover:scale-105 disabled:opacity-50"
+            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
           >
             {loading
               ? "Salvando..."
@@ -335,7 +334,6 @@ Horário: ${horario}
               {mensagem}
             </div>
           )}
-
         </div>
       </div>
     </main>
