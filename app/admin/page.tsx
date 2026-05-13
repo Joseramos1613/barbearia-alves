@@ -655,3 +655,8 @@ Aguardamos você 🔥
     </main>
   );
 }
+<img
+  src="/logo.png"
+  alt="Logo"
+  className="w-40 mx-auto mb-6"
+/>
