@@ -114,6 +114,8 @@ export default function Home() {
       setMensagem(
         "Erro ao salvar agendamento."
       );
+
+      console.log(error);
       return;
     }
 
@@ -131,8 +133,13 @@ Data: ${dataAgendamento}
 Horário: ${horario}
 `;
 
+    const telefoneBarbearia =
+      barbeiro === "José Ramos"
+        ? "5551992329691"
+        : "5551999999999";
+
     window.open(
-      `https://wa.me/5551992329691?text=${encodeURIComponent(
+      `https://wa.me/${telefoneBarbearia}?text=${encodeURIComponent(
         mensagemWhats
       )}`,
       "_blank"
@@ -152,12 +159,6 @@ Horário: ${horario}
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-[30px] p-10">
 
-        <img
-          src="/logo.png"
-          alt="Logo Barbearia Alves"
-          className="w-40 mx-auto mb-6"
-        />
-
         <h1 className="text-5xl font-black text-yellow-500 text-center">
           Barbearia Alves
         </h1>
@@ -167,6 +168,7 @@ Horário: ${horario}
         </p>
 
         <div className="space-y-5 mt-10">
+
           <input
             value={nome}
             onChange={(e) =>
@@ -227,6 +229,14 @@ Horário: ${horario}
             <option value="Corte + Barba - 85">
               Corte + Barba - R$85
             </option>
+
+            <option value="Sobrancelha - 15">
+              Sobrancelha - R$15
+            </option>
+
+            <option value="Corte Máquina - 30">
+              Corte Máquina - R$30
+            </option>
           </select>
 
           <input
@@ -253,41 +263,19 @@ Horário: ${horario}
 
             {(barbeiro === "José Ramos"
               ? [
-                  "09:00",
-                  "09:30",
-                  "10:00",
-                  "10:30",
-                  "11:00",
-                  "19:00",
-                  "19:30",
-                  "20:00",
+                  "09:00","09:30","10:00","10:30",
+                  "11:00","19:00","19:30","20:00",
                 ]
               : [
-                  "09:00",
-                  "09:30",
-                  "10:00",
-                  "10:30",
-                  "11:00",
-                  "14:00",
-                  "14:30",
-                  "15:00",
-                  "15:30",
-                  "16:00",
-                  "16:30",
-                  "17:00",
-                  "17:30",
-                  "18:00",
-                  "18:30",
-                  "19:00",
+                  "09:00","09:30","10:00","10:30",
+                  "11:00","14:00","14:30","15:00",
+                  "15:30","16:00","16:30","17:00",
+                  "17:30","18:00","18:30","19:00",
                 ])
               .filter(
                 (hora) =>
-                  !horariosOcupados.includes(
-                    hora
-                  ) &&
-                  !horariosBloqueados.includes(
-                    hora
-                  )
+                  !horariosOcupados.includes(hora) &&
+                  !horariosBloqueados.includes(hora)
               )
               .map((hora) => (
                 <option key={hora}>
@@ -299,7 +287,7 @@ Horário: ${horario}
           <button
             onClick={agendar}
             disabled={loading}
-            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition"
+            className="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition disabled:opacity-50"
           >
             {loading
               ? "Salvando..."
