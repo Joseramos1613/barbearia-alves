@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
 import {
+  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 
 interface Agendamento {
@@ -27,9 +27,7 @@ interface Agendamento {
 export default function AdminPage() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
-
-  const [logado, setLogado] =
-    useState(false);
+  const [logado, setLogado] = useState(false);
 
   const [agendamentos, setAgendamentos] =
     useState<Agendamento[]>([]);
@@ -63,10 +61,11 @@ export default function AdminPage() {
       await supabase
         .from("agendamentos")
         .select("*")
-        .order("id",
-        { ascending:false });
+        .order("id", {
+          ascending: false
+        });
 
-    if(!error && data){
+    if (!error && data) {
       setAgendamentos(data);
     }
 
@@ -75,7 +74,7 @@ export default function AdminPage() {
 
   async function excluirAgendamento(
     id:number
-  ){
+  ) {
 
     const { error } =
       await supabase
@@ -94,7 +93,7 @@ export default function AdminPage() {
   async function editarHorario(
     id:number,
     novoHorario:string
-  ){
+  ) {
 
     const { error } =
       await supabase
@@ -105,9 +104,11 @@ export default function AdminPage() {
       .eq("id",id);
 
     if(error){
-      alert("Erro");
+      alert("Erro ao editar");
       return;
     }
+
+    alert("Horário atualizado");
 
     carregarAgendamentos();
   }
@@ -119,7 +120,7 @@ export default function AdminPage() {
       !horarioBloqueio ||
       !barbeiroBloqueio
     ){
-      alert("Preencha");
+      alert("Preencha os campos");
       return;
     }
 
@@ -134,7 +135,7 @@ export default function AdminPage() {
       }]);
 
     if(error){
-      alert("Erro");
+      alert("Erro ao bloquear");
       return;
     }
 
@@ -167,7 +168,6 @@ export default function AdminPage() {
       );
 
     }
-
   }
 
   function sair(){
@@ -182,7 +182,7 @@ export default function AdminPage() {
 
   useEffect(()=>{
 
-    const adminLogado=
+    const adminLogado =
       localStorage.getItem(
         "admin-logado"
       );
@@ -199,24 +199,24 @@ export default function AdminPage() {
 
   },[]);
 
-  const totalAgendamentos=
+  const totalAgendamentos =
     agendamentos.length;
 
   const faturamentoTotal =
     agendamentos.reduce(
       (total,item)=>{
 
-      const partes=
+      const partes =
       item.servico.split("-");
 
-      const valor=
+      const valor =
       Number(partes[1]);
 
       return total+valor;
 
     },0);
 
-  const graficoData=[
+  const graficoData = [
 
     {
       nome:"Agendamentos",
@@ -238,9 +238,9 @@ return(
 
 <div className="bg-zinc-900 p-10 rounded-[30px] w-full max-w-md">
 
-<h1 className="text-4xl font-black text-yellow-500 text-center">
+<h1 className="text-4xl text-yellow-500 text-center font-black">
 
-Admin
+Login Admin
 
 </h1>
 
@@ -290,7 +290,7 @@ return(
 
 <div className="max-w-7xl mx-auto">
 
-<div className="flex justify-between mb-8">
+<div className="flex justify-between mb-10">
 
 <div>
 
@@ -321,11 +321,11 @@ Sair
 
 <div className="grid md:grid-cols-2 gap-5 mb-8">
 
-<div className="bg-zinc-900 p-6 rounded-3xl">
+<div className="bg-zinc-900 rounded-3xl p-6">
 
-<p>Total Agendamentos</p>
+<p>Total de Agendamentos</p>
 
-<h1 className="text-5xl text-yellow-500 font-black">
+<h1 className="text-5xl font-black text-yellow-500">
 
 {totalAgendamentos}
 
@@ -333,11 +333,11 @@ Sair
 
 </div>
 
-<div className="bg-zinc-900 p-6 rounded-3xl">
+<div className="bg-zinc-900 rounded-3xl p-6">
 
 <p>Faturamento</p>
 
-<h1 className="text-5xl text-green-500 font-black">
+<h1 className="text-5xl font-black text-green-500">
 
 R$ {faturamentoTotal}
 
@@ -349,7 +349,7 @@ R$ {faturamentoTotal}
 
 <div className="bg-zinc-900 rounded-3xl p-6 mb-8">
 
-<h2 className="text-3xl text-yellow-500 font-black mb-5">
+<h2 className="text-3xl text-yellow-500 font-black mb-6">
 
 Estatísticas
 
@@ -384,11 +384,11 @@ value={dataSelecionada}
 
 </div>
 
-{loading?
+{loading ? (
 
 <p>Carregando...</p>
 
-:
+):(
 
 <div className="grid gap-6">
 
@@ -406,18 +406,52 @@ className="bg-zinc-900 p-8 rounded-3xl"
 
 </h2>
 
-<p>
-{agendamento.servico}
-</p>
+<p>{agendamento.telefone}</p>
 
-<p>
-{agendamento.horario}
-</p>
+<p>{agendamento.barbeiro}</p>
 
-<div className="flex gap-3 mt-5">
+<p>{agendamento.servico}</p>
+
+<p>{agendamento.data_agendamento}</p>
+
+<p>{agendamento.horario}</p>
+
+<div className="flex gap-3 mt-6">
 
 <button
 onClick={()=>{
+
+const mensagem=`
+Olá ${agendamento.nome}, passando para lembrar do seu horário na Barbearia Alves 💈
+
+📅 Data: ${agendamento.data_agendamento}
+⏰ Horário: ${agendamento.horario}
+✂️ Serviço: ${agendamento.servico}
+
+Aguardamos você 🔥
+`;
+
+window.open(
+`https://wa.me/55${agendamento.telefone.replace(
+/\D/g,
+""
+)}?text=${encodeURIComponent(
+mensagem
+)}`,
+"_blank"
+);
+
+}}
+className="bg-green-600 px-5 py-3 rounded-2xl font-bold"
+>
+
+Enviar Lembrete
+
+</button>
+
+<button
+onClick={()=>{
+
 const novo=
 prompt(
 "Novo horário",
@@ -432,7 +466,7 @@ novo
 );
 
 }}
-className="bg-yellow-500 text-black px-5 py-3 rounded-2xl"
+className="bg-yellow-500 text-black px-5 py-3 rounded-2xl font-bold"
 >
 
 Editar
@@ -445,7 +479,7 @@ excluirAgendamento(
 agendamento.id
 )
 }
-className="bg-red-600 px-5 py-3 rounded-2xl"
+className="bg-red-600 px-5 py-3 rounded-2xl font-bold"
 >
 
 Excluir
@@ -460,12 +494,12 @@ Excluir
 
 </div>
 
-}
+)}
 
 </div>
 
 </main>
 
-);
+)
 
 }
